@@ -4,8 +4,8 @@ from django.contrib.admin.widgets import AdminFileWidget
 class JCropWidget(AdminFileWidget):
 
     class Media:
-        js = ( 'js/cropped_image_admin.js', 'js/jquery.Jcrop.js', )
-        css = { 'all': ('css/jquery.Jcrop.css', ) }
+        js = ( 'croppable/js/cropped_image_admin.js', 'croppable/js/jquery.Jcrop.js', )
+        css = { 'all': ('croppable/css/jquery.Jcrop.css', ) }
 
     def __init__(self, initial_width=160, initial_height=90, fix_aspect_ratio=False, attrs=None):
 
