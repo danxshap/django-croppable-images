@@ -47,7 +47,7 @@ class CroppableImageWidget(MultiWidget):
 
             return [croppable_image_file, croppable_image_file.coords_csv]
 
-        return [value, ',']
+        return [value, '']
 
     def render(self, name, value, attrs):
         attrs['data-coords-field-id'] = attrs['id'] + '_1'

@@ -13,7 +13,8 @@ class CroppableImageFieldFile(ImageFieldFile):
 
         super(CroppableImageFieldFile, self).__init__(instance, field, name)
 
-        if name and IMAGE_FIELD_DELIMITER in name:
+        # update self.name to the actual filename and save crop coordinates in another attribute
+        if name != None and IMAGE_FIELD_DELIMITER in name:
             name_components = name.split(IMAGE_FIELD_DELIMITER)
             self.original_name = name
             self.filename = name_components[0]
@@ -26,7 +27,6 @@ class CroppableImageFieldFile(ImageFieldFile):
         if self._committed:
             coords_csv = self.coords_csv if hasattr(self, 'coords_csv') else name
             stashed_filepath = getattr(self.instance, self.field.name + '_stashed_name').split(IMAGE_FIELD_DELIMITER)[0]
-            # stashed_filepath = self.instance.stashed_name.
             compound_name = IMAGE_FIELD_DELIMITER.join([stashed_filepath, coords_csv])
 
             # get imagekit spec field names --> spec files
@@ -34,7 +34,6 @@ class CroppableImageFieldFile(ImageFieldFile):
 
             # invalidate imagekit spec files
             if self.field.invalidate_on_save:
-                # self.name = self.filename if hasattr(self, 'filename') else self.instance.stashed_name.split(IMAGE_FIELD_DELIMITER)[0]
                 self.name = self.filename if hasattr(self, 'filename') else stashed_filepath
                 self.coords_csv = self.coords_csv if hasattr(self, 'coords_csv') else coords_csv
                 for spec_name in self.field.invalidate_on_save:
@@ -48,7 +47,7 @@ class CroppableImageFieldFile(ImageFieldFile):
             super(CroppableImageFieldFile, self).save(self.filename, content, save=False)
 
         # update name on both self & model instance to compound_name which is what we want to save to the database
-        setattr(self.instance, self.field.name, compound_name) # is this necessary or just the line below?  for now, can't hurt...
+        setattr(self.instance, self.field.name, compound_name) 
         self.name = compound_name
 
         # if we were supposed to save the model, now we should actually do it since the filename was reverted above
