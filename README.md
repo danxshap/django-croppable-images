@@ -21,8 +21,10 @@ Here's an example:
 
     class MyCoolModel(models.Model):
         name = models.CharField(max_length=200)
-        image = CroppableImageField(invalidate_on_save=['image_cropped'], upload_to='my_image_folder', blank=True, null=True)
+        image = CroppableImageField(invalidate_on_save=['image_cropped'], upload_to='my_image_folder', blank=True)
         image_cropped = ImageSpecField(get_crop_processor(image_field='image'), image_field='image')
+
+`CroppableImageField` is just a subclass of Django's `ImageField`, so it takes all of the arguments supported by its superclass (e.g. `upload_to` and `blank` in the example above)
 
 In most cases, you'll want to pass in the option `invalidate_on_save` argument to your `CroppableImageField` and set it to a list containing just the name of your `ImageSpecField` (as is done in the above example).  This tells django-image-kit to re-process the image modifications associated with each of the `ImageSpecField`'s in the list whenever your model is saved.  This is necessary so that the cropped image is up-to-date if the crop coordinates are changed.
 
