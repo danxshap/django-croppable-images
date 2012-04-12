@@ -27,6 +27,8 @@ Here's an example:
 
 `CroppableImageField` is just a subclass of Django's `ImageField`, so it takes all of the arguments supported by its superclass (e.g. `upload_to` and `blank` in the example above)
 
-In most cases, you'll want to pass in the optional `invalidate_on_save` argument to your `CroppableImageField` and set it to a list containing just the name of your corresponding `ImageSpecField` (as is done in the above example).  This tells django-image-kit to re-process the image modifications associated with each `ImageSpecField` in the list whenever your model is saved.  This is necessary so that the cropped image file is made up-to-date if the crop coordinates are changed.
+In most cases, you'll want to pass in the optional `invalidate_on_save` argument to your `CroppableImageField` and set it to a list containing just the name of your corresponding `ImageSpecField` (as is done in the above example).  This tells django-image-kit that it needs to re-process the image modifications associated with each `ImageSpecField` in the list at some point after (or at the same time as) your model is saved.  This is necessary so that the cropped image file is changed if the crop coordinates are changed.
 
-If you're familiar with ImageKit, by "re-process" above, we are just calling invalidate() on the corresponding `ImageSpecField`.
+If you're familiar with ImageKit, by "re-process" above, we are just calling invalidate() on the corresponding `ImageSpecField`.  We recommend using ImageKit's non-default `NonValidatingImageCacheBackend `.  In the context of django-croppable-images, all this does is make it so your cropped images are updated each time your model is saved.  Simply add the following line to your settings:
+
+    IMAGEKIT_DEFAULT_IMAGE_CACHE_BACKEND = 'imagekit.imagecache.NonValidatingImageCacheBackend'
