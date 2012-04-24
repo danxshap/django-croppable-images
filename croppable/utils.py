@@ -9,7 +9,7 @@ def create_crop_processor(instance, file, field_name, after_processors):
         w, h, x, y = map(int, crop_coords)
         crop_processor = [Crop(width=w, height=h, x=-x, y=-y)]
         
-    return after_processors + crop_processor
+    return crop_processor + after_processors
 
 def get_crop_processor(image_field, after_processors=[]):
     def call_this(instance, file):
