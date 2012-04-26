@@ -37,7 +37,8 @@ class CroppableImageFieldFile(ImageFieldFile):
                 self.name = self.filename if hasattr(self, 'filename') else stashed_filepath
                 self.coords_csv = self.coords_csv if hasattr(self, 'coords_csv') else coords_csv
                 for spec_name in self.field.invalidate_on_save:
-                    spec_dict.get(spec_name).invalidate()       
+                    if spec_name in spec_dict:
+                        spec_dict.get(spec_name).invalidate()       
         else:
             # create compound filename to save to the model (basically prepends upload_to relative directory)
             compound_name = os.path.join(self.field.get_directory_name(), os.path.normpath(os.path.basename(self.original_name)))
