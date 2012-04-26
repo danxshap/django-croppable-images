@@ -40,12 +40,13 @@ class CroppableImageFieldFile(ImageFieldFile):
                     if spec_name in spec_dict:
                         spec_dict.get(spec_name).invalidate()       
         else:
-            # create compound filename to save to the model (basically prepends upload_to relative directory)
-            compound_name = os.path.join(self.field.get_directory_name(), os.path.normpath(os.path.basename(self.original_name)))
+            # create compound filename to save to the model in the database
+            compound_name = self.field.generate_filename(self.instance, self.original_name)
 
             # call the super's save() which will save to storage with the proper filename
             # explicitly set the "save" arg to False so that model isn't saved (we don't want to save with actual filename)
-            super(CroppableImageFieldFile, self).save(self.filename, content, save=False)
+            storage_name = self.field.generate_filename(self.instance, self.filename)
+            super(CroppableImageFieldFile, self).save(storage_name, content, save=False)
 
         # update name on both self & model instance to compound_name which is what we want to save to the database
         setattr(self.instance, self.field.name, compound_name) 
