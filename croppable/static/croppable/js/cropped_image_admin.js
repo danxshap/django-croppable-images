@@ -75,19 +75,30 @@ $(document).ready(function() {
             onSelect: createCoordHandler(d['coords-field-id'], d['target-img-id']),
             onRelease: createReleaseHandler(d['coords-field-id'], d['target-img-id']),
             allowSelect: ! d['fix-aspect-ratio'],
-            aspectRatio: d['fix-aspect-ratio'] * (d['initial-width'] / d['initial-height'])
+            aspectRatio: d['fix-aspect-ratio'] * (d['initial-crop-width'] / d['initial-crop-height'])
         }
 
         if(!isNewImage) {
             var coordsCSV = $('#' + d['coords-field-id']).val();
             initial_crop = getBoxCoords(coordsCSV);
         } else {
-            initial_crop = [0, 0, d['initial-width'], d['initial-height']];
+            initial_crop = [0, 0, d['initial-crop-width'], d['initial-crop-height']];
         }
 
         if(initial_crop) {
             options['setSelect'] = initial_crop;
         }
+
+        if(d['min-image-width'] && d['min-image-height']){
+            options['minSize'] = [d['min-image-width'], d['min-image-height']];
+        }
+
+        options['onRelease'] = function(){
+            if(!options['allowSelect']){
+                this.setSelect(this.tellSelect());
+                this.enable();
+            }
+        };
         
         return options
     }
@@ -111,6 +122,9 @@ $(document).ready(function() {
         imgToCrop.file = file;
         fileInput.after(imgToCrop);
 
+        // hide image so that it doesn't appear for a split second if it's too small
+        $(imgToCrop).hide();
+
         // HTML5 file reader to display local image file
         var reader = new FileReader();
         reader.onload = (function(img) {
@@ -119,9 +133,30 @@ $(document).ready(function() {
                                 $(img).attr('id', targetImgId);
                                 $(img).Jcrop(
                                     getJcropOptions(fileInput.data(), true), function() {
-                                        // after jcrop initializes, update coords element with initial crop coords
-                                        jcrop_api = this;
-                                        setCropCoords(jcrop_api.tellSelect(), coordsFieldId, targetImgId);
+                                        // destroy Jcrop and remove image if it doesn't meet minimum dimensions
+                                        var min_width = fileInput.data('min-image-width');
+                                        var min_height = fileInput.data('min-image-height');
+
+                                        if((min_width && img.width < min_width) ||
+                                            (min_height && img.height < min_height)){
+
+                                            $(img).remove();
+                                            this.destroy();
+
+                                            var msg = 'That image is too small. ';
+                                            if(min_width){
+                                                msg += 'The minimum width is ' + min_width + '. ';
+                                            }
+                                            if(min_height){
+                                                msg += 'The minimum height is ' + min_height + '.';
+                                            }
+
+                                            alert(msg);
+                                        } else {
+                                            // after jcrop initializes, update coords element with initial crop coords
+                                            jcrop_api = this;
+                                            setCropCoords(jcrop_api.tellSelect(), coordsFieldId, targetImgId);
+                                        }
                                     }
                                 );
                             };
