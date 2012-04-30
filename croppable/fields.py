@@ -22,7 +22,7 @@ class CroppableImageFieldFile(ImageFieldFile):
             self.name = self.filename
 
     def save(self, name, content, save=True):
-        # if the _committed attribute (form super-class) is True, there is no new image to upload
+        # if the _committed attribute (from the super-class) is True, there is no new image to upload
         # that means we are either just changing coordinates (in which case name = coordinates) or not changing anything at all (use self.coords_csv)
         if self._committed:
             coords_csv = self.coords_csv if hasattr(self, 'coords_csv') else name
@@ -38,15 +38,20 @@ class CroppableImageFieldFile(ImageFieldFile):
                 self.coords_csv = self.coords_csv if hasattr(self, 'coords_csv') else coords_csv
                 for spec_name in self.field.invalidate_on_save:
                     if spec_name in spec_dict:
-                        spec_dict.get(spec_name).invalidate()       
+                        spec = spec_dict.get(spec_name)
+                        spec.delete()
+                        spec.invalidate()
+        
         else:
-            # create compound filename to save to the model in the database
-            compound_name = self.field.generate_filename(self.instance, self.original_name)
-
             # call the super's save() which will save to storage with the proper filename
             # explicitly set the "save" arg to False so that model isn't saved (we don't want to save with actual filename)
             storage_name = self.field.generate_filename(self.instance, self.filename)
             super(CroppableImageFieldFile, self).save(storage_name, content, save=False)
+
+            # create compound filename to save to the model in the database
+            # must be done *after* the call to the super class in case the storage backend changes the filename (e.g. duplicates)
+            actual_filepath = getattr(self.instance, self.field.name).name
+            compound_name = IMAGE_FIELD_DELIMITER.join([actual_filepath, self.coords_csv])
 
         # update name on both self & model instance to compound_name which is what we want to save to the database
         setattr(self.instance, self.field.name, compound_name) 
