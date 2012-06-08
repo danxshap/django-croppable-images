@@ -170,5 +170,4 @@
 
     });
 
-}(jQuery));
-
+}(jQuery || django.jQuery));
