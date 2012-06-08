@@ -5,8 +5,8 @@
         // go through all jcrop file inputs on the page
         $.each($('.jcrop_file'), function(i, v) {
             var fileInput = $(v);
-            var existingImgUrl = fileInput.data('existing-img-url');
-            var targetImgId = fileInput.data('target-img-id');
+            var existingImgUrl = fileInput.attr('data-existing-img-url');
+            var targetImgId = fileInput.attr('data-target-img-id');
 
             // if there is a URL, load that image and set up Jcrop based on data stored in jcrop file input elemenet
             if(existingImgUrl){
@@ -17,7 +17,7 @@
                 // only initialize Jcrop after the image has loaded
                 $(imgToCrop).load(function() {
                     $(imgToCrop).show().Jcrop(
-                        getJcropOptions(fileInput.data(), false)
+                        getJcropOptions(fileInput, false);
                     );
                 });
 
@@ -75,26 +75,26 @@
         // create jcrop options dictionary from jcrop file input data dictionary
         function getJcropOptions(d, isNewImage) {
             var options = {
-                onSelect: createCoordHandler(d['coords-field-id'], d['target-img-id']),
-                onRelease: createReleaseHandler(d['coords-field-id'], d['target-img-id']),
-                allowSelect: ! d['fix-aspect-ratio'],
-                aspectRatio: d['fix-aspect-ratio'] * (d['initial-crop-width'] / d['initial-crop-height'])
+                onSelect: createCoordHandler(d.attr('data-coords-field-id'), d.attr('data-target-img-id')),
+                onRelease: createReleaseHandler(d.attr('data-coords-field-id'), d.attr('data-target-img-id')),
+                allowSelect: ! d.attr('data-fix-aspect-ratio'),
+                aspectRatio: d.attr('data-fix-aspect-ratio') * (d.attr('data-initial-crop-width') / d.attr('data-initial-crop-height'))
             }
 
             var initial_crop;
             if(!isNewImage) {
-                var coordsCSV = $('#' + d['coords-field-id']).val();
+                var coordsCSV = $('#' + d.attr('data-coords-field-id')).val();
                 initial_crop = getBoxCoords(coordsCSV);
             } else {
-                initial_crop = [0, 0, d['initial-crop-width'], d['initial-crop-height']];
+                initial_crop = [0, 0, d.attr('data-initial-crop-width'), d.attr('data-initial-crop-height')];
             }
 
             if(initial_crop) {
                 options['setSelect'] = initial_crop;
             }
 
-            if(d['min-image-width'] && d['min-image-height']){
-                options['minSize'] = [d['min-image-width'], d['min-image-height']];
+            if(d.attr('data-min-image-width') && d.attr('data-min-image-height')){
+                options['minSize'] = [d.attr('data-min-image-width'), d.attr('data-min-image-height')];
             }
 
             options['onRelease'] = function(){
@@ -110,8 +110,8 @@
         // given a file input element rendered by the JCropWidget Django widget, display the local image it points to and set up Jcrop
         function loadLocalImage(fileInput) {
             var file = fileInput.attr('files')[0];
-            var targetImgId = fileInput.data('target-img-id');
-            var coordsFieldId = fileInput.data('coords-field-id');
+            var targetImgId = fileInput.attr('data-target-img-id');
+            var coordsFieldId = fileInput.attr('data-coords-field-id');
 
             // clear coordinates field
             $('#' + coordsFieldId).val('');
@@ -136,10 +136,10 @@
                                     img.src = e.target.result;
                                     $(img).attr('id', targetImgId);
                                     $(img).Jcrop(
-                                        getJcropOptions(fileInput.data(), true), function() {
+                                        getJcropOptions(fileInput, true), function() {
                                             // destroy Jcrop and remove image if it doesn't meet minimum dimensions
-                                            var min_width = fileInput.data('min-image-width');
-                                            var min_height = fileInput.data('min-image-height');
+                                            var min_width = fileInput.attr('data-min-image-width');
+                                            var min_height = fileInput.attr('data-min-image-height');
 
                                             if((min_width && img.width < min_width) ||
                                                 (min_height && img.height < min_height)){
