@@ -17,7 +17,7 @@
                 // only initialize Jcrop after the image has loaded
                 $(imgToCrop).load(function() {
                     $(imgToCrop).show().Jcrop(
-                        getJcropOptions(fileInput, false);
+                        getJcropOptions(fileInput, false)
                     );
                 });
 
