@@ -109,7 +109,7 @@
 
         // given a file input element rendered by the JCropWidget Django widget, display the local image it points to and set up Jcrop
         function loadLocalImage(fileInput) {
-            var file = fileInput.attr('files')[0];
+            var file = fileInput[0].files[0];
             var targetImgId = fileInput.attr('data-target-img-id');
             var coordsFieldId = fileInput.attr('data-coords-field-id');
 
