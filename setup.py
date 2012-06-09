@@ -8,6 +8,7 @@ setup(
     author_email='danxshap@gmail.com',
     url='http://github.com/danxshap/django-croppable-images',
     packages=find_packages(),
+    include_package_data = True,
     install_requires = ['setuptools', 'django-imagekit'],
     classifiers=[
         'Development Status :: 4 - Beta',
