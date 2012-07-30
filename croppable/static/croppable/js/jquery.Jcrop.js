@@ -1597,4 +1597,4 @@
   };
 
   // }}}
-}(jQuery));
+}(jQuery || django.jQuery));
