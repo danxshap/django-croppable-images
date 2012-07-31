@@ -33,3 +33,9 @@
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 }
+
+.jcrop-holder img
+{
+    max-width: none;
+    vertical-align: none;
+}

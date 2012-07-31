@@ -97,13 +97,6 @@
                 options['minSize'] = [d.attr('data-min-image-width'), d.attr('data-min-image-height')];
             }
 
-            options['onRelease'] = function(){
-                if(!options['allowSelect']){
-                    this.setSelect(this.tellSelect());
-                    this.enable();
-                }
-            };
-            
             return options
         }
 
