@@ -37,6 +37,6 @@
 .jcrop-holder img
 {
     max-width: none;
-    vertical-align: none;
+    vertical-align: baseline;
 }
 
