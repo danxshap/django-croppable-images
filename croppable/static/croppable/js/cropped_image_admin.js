@@ -77,7 +77,7 @@
             var options = {
                 onSelect: createCoordHandler(d.attr('data-coords-field-id'), d.attr('data-target-img-id')),
                 onRelease: createReleaseHandler(d.attr('data-coords-field-id'), d.attr('data-target-img-id')),
-                allowSelect: ! d.attr('data-fix-aspect-ratio'),
+                allowSelect: ! parseInt(d.attr('data-fix-aspect-ratio')),
                 aspectRatio: d.attr('data-fix-aspect-ratio') * (d.attr('data-initial-crop-width') / d.attr('data-initial-crop-height'))
             }
 
