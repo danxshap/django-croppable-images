@@ -9,7 +9,7 @@ setup(
     url='http://github.com/danxshap/django-croppable-images',
     packages=find_packages(),
     include_package_data = True,
-    install_requires = ['setuptools', 'django-imagekit'],
+    install_requires = ['setuptools', 'django-imagekit==2.0.4'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
